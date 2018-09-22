@@ -10,14 +10,62 @@ form = """
     <html>
         <head>
             <style>
+                body {{
+                    font-family: 'Trebuchet MS', sans-serif;
+                    text-align: center;
+                }}
+
+                h1 {{
+                    font-size: 22px;
+                    font-weight: lighter;
+                    color: #864100;
+                }}
+
+                h3 {{
+                    font-size: 16px;
+                    color: #864100;
+                    margin: -5px 0 5px;
+                    text-transform: uppercase;  
+                }}
+
+                h2 {{
+                    font-size: 14px;
+                    margin: -12px 0 10px; 
+                    font-style: italic;
+                    font-weight: lighter;
+                }}
+
                 .box {{
                     background-color: #eee;
+                    font-size: 14px;
                     padding: 20px;
-                    margin: 5px auto;
+                    margin: 10px auto;
                     width: 80%;
-                    font: 14px sans-serif;
+                    min-width: 260px;
                     border-radius: 10px;
                     text-align: center;
+                }}
+
+                .box:empty{{
+                    display: none;
+                }}
+
+                .inputs {{
+                    background-color: lightgray;
+                    font-size: 18px;
+                    width: 70%;
+                    max-width: 400px; 
+                    padding: 10px;
+                    margin: 10px auto;
+                    border-radius: 10px;
+                }}
+
+                .rotation {{
+                    width: 20%;
+                    margin-left: 10px;
+                    padding-left: 10px;
+                    color: gray;
+                    display: inline-block;
                 }}
 
                 textarea {{
@@ -27,33 +75,17 @@ form = """
                     height: 120px;
                 }}
 
-                .inputs {{
-                    background-color: lightgray;
-                    font-size: 16px;
-                    font-weight: bold;
-                    width: 400px; 
-                    padding: 10px;
-                    margin: 10px;
-                    border-radius: 10px;
-                    display: inline-block;
-                }}
-
-                .rotation {{
-                    width: 20%;
-                    margin-left: 10px;
-                    padding-left: 10px; 
-                }}
-
                 button {{
                     width: 100px;
-                    margin: 10px auto;
+                    margin: 10px;
                     border: 1px solid #864100;
                     background-color: white;
                     padding: 10px;
                     border-radius: 10px;
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
                     transition-duration: 0.2s
                     display: inline-block;
-                    letter-spacing: 1px;
                 }}
 
                 button:hover {{
@@ -62,25 +94,12 @@ form = """
                     font-weight: bold;
                 }}
 
-                h1 {{
-                    text-align: center;
-                    font: 20px sans-serif;
-                    color: #864100;
-                }}
-
-                h2 {{
-                    text-align: center;
-                    font: 14px sans-serif;
-                    font-style: italic;
-                    margin: -10px 0 10px 0; 
-                }}
-
-
             </style>
         </head>
         <body>
             <h1>Web-Caesar Encryption</h1>
             <h2>Michael Toth - LC101 Unit 2</h2>
+
             <form class="box" action="/" method="POST">
                 <div class="inputs">
 
@@ -89,33 +108,28 @@ form = """
                 
                 </div>
 
-                <textarea name="text">{0}</textarea>
+                <textarea name="text">{0}</textarea><br>
 
-                <div style="text-align: center;">
-                    <button type="submit">ENCRYPT</button> <button type="reset">RESET</button>
-                </div>
-
+                <button type="submit">ENCRYPT</button>
+                <button type="reset">RESET</button>
+                
             </form>
 
-            <div class="box">
-                {1}
-            </div>
+            <div class="box">{1}</div>
+
         </body>
     </html>
     """
 
 @app.route("/")
 def index():
-    return form.format("Sample Text.", "Test Stuff")
+    return form.format("Sample Text.", "", "")
 
 @app.route("/", methods=['POST'])
 def encrypt():
     rot = int(request.form['rot'])
     text = str(request.form['text'])
 
-    # return_text = encrypted+"<p>"+str(rotate_string(text, rot))+"</p>"+encrypted_footer
-
-    return form.format("Sample Text.", str(rotate_string(text, rot)))
-
+    return form.format("Sample Text.", "<h3>Encrypted Text ("+str(rot)+")</h3>"+str(rotate_string(text, rot)), rot)
 
 app.run()
