@@ -72,6 +72,8 @@ form = """
                     margin-top: 10px;
                     margin-bottom: 20px;
                     width: 80%;
+                    max-width: 80%;
+                    min-width: 200px;
                     height: 120px;
                 }}
 
@@ -84,7 +86,7 @@ form = """
                     border-radius: 10px;
                     font-size: 12px;
                     letter-spacing: 1.5px;
-                    transition-duration: 0.2s
+                    transition-duration: 0.2s;
                     display: inline-block;
                 }}
 
