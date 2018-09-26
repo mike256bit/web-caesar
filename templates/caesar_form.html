@@ -29,7 +29,7 @@
             }
 
             .box {
-                background-color: #eee;
+                background-color: rgb(238, 238, 238, .6);
                 font-size: 14px;
                 padding: 20px;
                 margin: 10px auto;
@@ -38,10 +38,7 @@
                 border-radius: 10px;
                 text-align: center;
                 min-height: 50px;
-            }
 
-            .box:empty{
-                    display: none;
             }
 
             .inputs {
@@ -58,7 +55,7 @@
                 width: 20%;
                 margin-left: 10px;
                 padding-left: 10px;
-                color: gray;
+                /* color: gray; */
                 display: inline-block;
             }
 
@@ -69,6 +66,7 @@
                 max-width: 80%;
                 min-width: 200px;
                 height: 120px;
+                opacity: .7;
             }
 
             button {
@@ -97,7 +95,18 @@
                 line-height: 10px;
             }    
 
-        </style>    
+            #caesar{
+                opacity: .25;
+                position: fixed;
+                bottom: -135px;
+                right: -90px;
+                /* display: inline-block; */
+                width: 600px;
+                z-index: -1;
+            }
+
+        </style> 
+        <title>Web-Caesar</title>   
     </head>
     <body>
         <h1>Web-Caesar Encryption</h1>
@@ -117,7 +126,10 @@
 
         </form>
 
-        <div class="box">{{text_return}}</div>
+        {% block response %}
+        {% endblock %}
+
+        <img id="caesar" src="https://image.ibb.co/i7Rk2U/caesar2.jpg" alt="Fix this.">
 
     </body>
 </html>

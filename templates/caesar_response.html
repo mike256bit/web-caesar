@@ -1,0 +1,12 @@
+{% extends "caesar_form.html" %}
+
+{% block response %}
+<div class="box">
+    <h3>{{encrypted}}</h3>
+
+    {% for item in text_return %}
+    <p class="{{error_class}}">{{item}}</p>
+    {% endfor %}
+    
+</div>
+{% endblock %}

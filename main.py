@@ -1,14 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from caesar import rotate_string
 import os
 import cgi
-import jinja2
 
-#sets template path based on main.py path
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-
-#creates jinja environment for templates (load templates from here)
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
 
 
 app = Flask(__name__)
@@ -16,33 +10,33 @@ app.config['DEBUG'] = True
 
 @app.route("/")
 def index():
-    template = jinja_env.get_template('caesar_form.html')
-    return template.render(sample_text="Sample Text.", encrypted = "")
+    return render_template('caesar_form.html', sample_text="Sample Text.")
     
 @app.route("/", methods=['POST'])
 def encrypt():
     rot = request.form['rot']
     text = request.form['text']
-    error = ""
-    response = ""
     primer = "Sample text."
+    response = []
+    encr_title = ""
+    error_class = ""
+    
 
     if text == "":
-        error = "<p class='error'>Please enter text to encrypt.</p>"
-        response += error
+        error_class = "error"
+        response.append("Please enter text to encrypt.") 
 
     if rot == "":
-        error = "<p class='error'>Please enter a number.</p>"
-        response += error
+        error_class = "error"
+        response.append("Please enter a number.")
         if not text == "":
             primer = text
 
     if not text == "" and not rot == "":
+        encr_title = "Encrypted Text ("+rot+")"
         rot = int(rot)
-        text = cgi.escape(text)
-        response = "<h3>Encrypted Text ("+str(rot)+")</h3>"+rotate_string(text, rot)
-    
-    template = jinja_env.get_template('caesar_form.html')
-    return template.render(sample_text = primer, text_return = response)
+        response.append(rotate_string(text, rot))
+        
+    return render_template('caesar_response.html', sample_text = primer, text_return = response, encrypted = encr_title, error_class = error_class)
     
 app.run()
