@@ -1,137 +1,48 @@
 from flask import Flask, request
 from caesar import rotate_string
+import os
+import cgi
+import jinja2
+
+#sets template path based on main.py path
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+
+#creates jinja environment for templates (load templates from here)
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-form = """
-    <!DOCTYPE html>
-
-    <html>
-        <head>
-            <style>
-                body {{
-                    font-family: 'Trebuchet MS', sans-serif;
-                    text-align: center;
-                }}
-
-                h1 {{
-                    font-size: 22px;
-                    font-weight: lighter;
-                    color: #864100;
-                }}
-
-                h3 {{
-                    font-size: 16px;
-                    color: #864100;
-                    margin: -5px 0 5px;
-                    text-transform: uppercase;  
-                }}
-
-                h2 {{
-                    font-size: 14px;
-                    margin: -12px 0 10px; 
-                    font-style: italic;
-                    font-weight: lighter;
-                }}
-
-                .box {{
-                    background-color: #eee;
-                    font-size: 14px;
-                    padding: 20px;
-                    margin: 10px auto;
-                    width: 80%;
-                    min-width: 260px;
-                    border-radius: 10px;
-                    text-align: center;
-                }}
-
-                .box:empty{{
-                    display: none;
-                }}
-
-                .inputs {{
-                    background-color: lightgray;
-                    font-size: 18px;
-                    width: 70%;
-                    max-width: 400px; 
-                    padding: 10px;
-                    margin: 10px auto;
-                    border-radius: 10px;
-                }}
-
-                .rotation {{
-                    width: 20%;
-                    margin-left: 10px;
-                    padding-left: 10px;
-                    color: gray;
-                    display: inline-block;
-                }}
-
-                textarea {{
-                    margin-top: 10px;
-                    margin-bottom: 20px;
-                    width: 80%;
-                    max-width: 80%;
-                    min-width: 200px;
-                    height: 120px;
-                }}
-
-                button {{
-                    width: 100px;
-                    margin: 10px;
-                    border: 1px solid #864100;
-                    background-color: white;
-                    padding: 10px;
-                    border-radius: 10px;
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
-                    transition-duration: 0.2s;
-                    display: inline-block;
-                }}
-
-                button:hover {{
-                    background-color: #864100;
-                    color: white;
-                    font-weight: bold;
-                }}
-
-            </style>
-        </head>
-        <body>
-            <h1>Web-Caesar Encryption</h1>
-            <h2>Michael Toth - LC101 Unit 2</h2>
-
-            <form class="box" action="/" method="POST">
-                <div class="inputs">
-
-                    Encryption rotation (number): 
-                    <input class="rotation" type="number"  name="rot" value="0">
-                
-                </div>
-
-                <textarea name="text">{0}</textarea><br>
-
-                <button type="submit">ENCRYPT</button>
-                <button type="reset">RESET</button>
-                
-            </form>
-
-            <div class="box">{1}</div>
-
-        </body>
-    </html>
-    """
-
 @app.route("/")
 def index():
-    return form.format("Sample Text.", "", "")
-
+    template = jinja_env.get_template('caesar_form.html')
+    return template.render(sample_text="Sample Text.", encrypted = "")
+    
 @app.route("/", methods=['POST'])
 def encrypt():
-    rot = int(request.form['rot'])
-    text = str(request.form['text'])
+    rot = request.form['rot']
+    text = request.form['text']
+    error = ""
+    response = ""
+    primer = "Sample text."
 
-    return form.format("Sample Text.", "<h3>Encrypted Text ("+str(rot)+")</h3>"+str(rotate_string(text, rot)), rot)
+    if text == "":
+        error = "<p class='error'>Please enter text to encrypt.</p>"
+        response += error
 
+    if rot == "":
+        error = "<p class='error'>Please enter a number.</p>"
+        response += error
+        if not text == "":
+            primer = text
+
+    if not text == "" and not rot == "":
+        rot = int(rot)
+        text = cgi.escape(text)
+        response = "<h3>Encrypted Text ("+str(rot)+")</h3>"+rotate_string(text, rot)
+    
+    template = jinja_env.get_template('caesar_form.html')
+    return template.render(sample_text = primer, text_return = response)
+    
 app.run()
