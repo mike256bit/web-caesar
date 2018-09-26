@@ -3,8 +3,6 @@ from caesar import rotate_string
 import os
 import cgi
 
-
-
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
